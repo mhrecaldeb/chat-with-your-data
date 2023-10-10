@@ -40,8 +40,8 @@ print(llm_name)
 # encabezado de streamlite
 st.sidebar.header('Ingresa tu OpenAI API KEY')
 
-st.write("""
-# Consulta a los documentos PDF
+st.sidebar.write("""
+### Consulta a los documentos PDF
 
 Esta aplicación te permite preguntar a tus documentos!
 
@@ -108,7 +108,9 @@ if key_entered:
 
     # Build prompt
     from langchain.prompts import PromptTemplate
-    template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, "Yo no se", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre di: "Gracias por preguntar", al final de la respuesta. 
+    template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, 
+                "Yo no se", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre di: 
+                "Gracias por preguntar", al final de la respuesta. 
     {context}
     Pregunta: {question}
     Respuesta útil:"""
@@ -140,6 +142,9 @@ if key_entered:
     if question:
         result = qa_chain({"query": question})
         # ...and write it out to the screen
+        st.write("""
+            ### Esta es la respuesta
+                """)
         st.write(result["result"])
 
         # Display raw response object
