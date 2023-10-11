@@ -3,11 +3,13 @@
 import sys
 import os
 import datetime
+import PyPDF2
 
 import openai
 
 import streamlit as st
 from io import StringIO
+from PyPDF2 import PdfReader
 
 #openai.api_key  = os.environ['OPENAI_API_KEY']
 #openai_api_key = input("Ingresa tu API KEY de OpenAI: \n")
@@ -72,27 +74,29 @@ if key_entered:
                  ### Selecciona los PDF que quieres usar
                  """)
 
-    a = PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf")
-    st.write("###a: ", type(a))
+    #a = PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf")
+    #st.write("###a: ", type(a))
 
-    loaders = [
+    #loaders = [
     #     # Duplicate documents on purpose - messy data
-        PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf"),
-        PyPDFLoader(path + "\Data\Resolucion_no_002_NG_Dinarp_2023.pdf"),
-        PyPDFLoader(path + "\Data\Resolucion_no_003_NG_Dinarp_2023.pdf"),
-        PyPDFLoader(path + "\Data\Resolucion_no_008_NG_Dinarp_2023.pdf")
-                 ]
+    #    PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf"),
+    #    PyPDFLoader(path + "\Data\Resolucion_no_002_NG_Dinarp_2023.pdf"),
+    #    PyPDFLoader(path + "\Data\Resolucion_no_003_NG_Dinarp_2023.pdf"),
+    #    PyPDFLoader(path + "\Data\Resolucion_no_008_NG_Dinarp_2023.pdf")
+    #             ]
     
-    st.write("###loaders: ", type(loaders))
+    #st.write("###loaders: ", type(loaders))
 
-    # uploaded_files = st.sidebar.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=False)
+    uploaded_files = st.sidebar.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=False)
 
-    # if uploaded_files is not None:
-    #     for uploaded_file in uploaded_files:
-    #         loaders.append(PyPDFLoader(uploaded_file))
-    #         bytes_data = uploaded_file.read()
-    #         st.write("filename:", uploaded_file.name)
-    #         st.write(bytes_data)
+    if uploaded_files is not None:
+         for uploaded_file in uploaded_files:
+    
+    
+             loaders.append(PyPDFLoader(uploaded_file))
+             bytes_data = uploaded_file.read()
+             st.write("filename:", uploaded_file.name)
+             st.write(bytes_data)
 
     # if uploaded_files is not None:
        
