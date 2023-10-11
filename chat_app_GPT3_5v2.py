@@ -106,17 +106,29 @@ if key_entered:
 #            docs.extend(loader.load())
     
         # Split
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 1500,
-            chunk_overlap = 150,
-            separators= "\n"
+        #text_splitter = RecursiveCharacterTextSplitter(
+        #    chunk_size = 1500,
+        #    chunk_overlap = 150,
+        #    separators= "\n"
+        #)
+
+        text_splitter = CharacterTextSplitter(
+            separator="\n",
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len
         )
 
-
-        splits = text_splitter.split_documents(text) #was docs
+        #splits = text_splitter.split_documents(text) #was docs
+        splits = text_splitter.split_text(text) #was docs
         embedding = OpenAIEmbeddings()
 
-        vectordb = FAISS.from_documents(
+        #vectordb = FAISS.from_documents(
+        #    splits,
+        #    embedding
+        #)
+
+        vectordb = FAISS.from_texts(
             splits,
             embedding
         )
