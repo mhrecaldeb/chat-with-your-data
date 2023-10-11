@@ -7,7 +7,7 @@ import datetime
 import openai
 
 import streamlit as st
-
+from io import StringIO
 
 #openai.api_key  = os.environ['OPENAI_API_KEY']
 #openai_api_key = input("Ingresa tu API KEY de OpenAI: \n")
@@ -36,6 +36,9 @@ else:
     llm_name = "gpt-3.5-turbo"
 print(llm_name)
 
+
+#path = os.getcwd()
+path = "C:/Users/mhrec/OneDrive/Capacitación/AmazonWebScrapping/ChatWithLangChain/chat-with-your-data/"
 
 # encabezado de streamlite
 st.sidebar.header('Ingresa tu OpenAI API KEY')
@@ -69,23 +72,48 @@ if key_entered:
                  ### Selecciona los PDF que quieres usar
                  """)
 
-    # loaders = [
+    a = PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf")
+    st.write("###a: ", type(a))
+
+    loaders = [
     #     # Duplicate documents on purpose - messy data
-    #     PyPDFLoader("./Data/Resolucion_no_001_NG_Dinarp_2023.pdf"),
-    #     PyPDFLoader("./Data/Resolucion_no_002_NG_Dinarp_2023.pdf"),
-    #     PyPDFLoader("./Data/Resolucion_no_003_NG_Dinarp_2023.pdf"),
-    #     PyPDFLoader("./Data/Resolucion_no_008_NG_Dinarp_2023.pdf")
-    # ]
-
-    loaders = []
-
-    uploaded_files = st.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=True)
+        PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf"),
+        PyPDFLoader(path + "\Data\Resolucion_no_002_NG_Dinarp_2023.pdf"),
+        PyPDFLoader(path + "\Data\Resolucion_no_003_NG_Dinarp_2023.pdf"),
+        PyPDFLoader(path + "\Data\Resolucion_no_008_NG_Dinarp_2023.pdf")
+                 ]
     
-    for uploaded_file in uploaded_files:
-        loaders.append(PyPDFLoader(uploaded_file))
-        bytes_data = uploaded_file.read()
-        st.write("filename:", uploaded_file.name)
-        st.write(bytes_data)
+    st.write("###loaders: ", type(loaders))
+
+    # uploaded_files = st.sidebar.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=False)
+
+    # if uploaded_files is not None:
+    #     for uploaded_file in uploaded_files:
+    #         loaders.append(PyPDFLoader(uploaded_file))
+    #         bytes_data = uploaded_file.read()
+    #         st.write("filename:", uploaded_file.name)
+    #         st.write(bytes_data)
+
+    # if uploaded_files is not None:
+       
+        # for uploaded_file in uploaded_files:
+        #     #loaders.append(PyPDFLoader(uploaded_file))
+        #     docs.extend(uploaded_file.getvalue())
+        #     bytes_data = uploaded_file.read()
+        #     st.write("filename:", uploaded_file.name)
+        #     st.write(bytes_data)
+
+    # To read file as bytes:
+        # bytes_data = uploaded_files.getvalue()
+        # st.write(bytes_data)
+
+        # # To convert to a string based IO:
+        # stringio = StringIO(uploaded_files.getvalue().decode("utf-8"))
+        # st.write(stringio)
+
+        # # To read file as string:
+        # string_data = stringio.read()
+        # st.write(string_data)
 
 
     docs = []
