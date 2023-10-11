@@ -75,25 +75,11 @@ if key_entered:
                  ### Selecciona los PDF que quieres usar
                  """)
 
-    #a = PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf")
-    #st.write("###a: ", type(a))
-
-    #loaders = [
-    #     # Duplicate documents on purpose - messy data
-    #    PyPDFLoader(path + "\Data\Resolucion_no_001_NG_Dinarp_2023.pdf"),
-    #    PyPDFLoader(path + "\Data\Resolucion_no_002_NG_Dinarp_2023.pdf"),
-    #    PyPDFLoader(path + "\Data\Resolucion_no_003_NG_Dinarp_2023.pdf"),
-    #    PyPDFLoader(path + "\Data\Resolucion_no_008_NG_Dinarp_2023.pdf")
-    #             ]
-    
-    #st.write("###loaders: ", type(loaders))
-
     uploaded_files = st.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=True)
 
     # extract text from files
     if uploaded_files is not None:
         
-        #loaders = []
         text = ""
         for uploaded_file in uploaded_files:
             st.write("filename:", uploaded_file.name)
@@ -101,16 +87,8 @@ if key_entered:
             for page in pdf_reader.pages:
                 text += page.extract_text()
         
-#        docs = []
-#        for loader in loaders:
-#            docs.extend(loader.load())
-    
-        # Split
-        #text_splitter = RecursiveCharacterTextSplitter(
-        #    chunk_size = 1500,
-        #    chunk_overlap = 150,
-        #    separators= "\n"
-        #)
+  
+        # Split text
 
         text_splitter = CharacterTextSplitter(
             separator="\n",
@@ -123,10 +101,6 @@ if key_entered:
         splits = text_splitter.split_text(text) #was docs
         embedding = OpenAIEmbeddings()
 
-        #vectordb = FAISS.from_documents(
-        #    splits,
-        #    embedding
-        #)
 
         vectordb = FAISS.from_texts(
             splits,
