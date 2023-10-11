@@ -55,9 +55,6 @@ st.sidebar.markdown("""
                     
 """)
 
-st.sidebar.write("""
-                 ### Selecciona los PDF que quieres usar
-                 """)
 
 key_entered = st.sidebar.text_input('Ingresa tu api key aquí')
 
@@ -67,6 +64,10 @@ if key_entered:
 
 
     # Load PDF
+
+    st.sidebar.write("""
+                 ### Selecciona los PDF que quieres usar
+                 """)
 
     # loaders = [
     #     # Duplicate documents on purpose - messy data
