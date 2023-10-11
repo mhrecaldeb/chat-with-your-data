@@ -13,4 +13,4 @@ hnswlib==0.7.0
 orjson==3.9.1
 types-requests==2.31.0.1
 chromadb==0.3.25
-PyPDF==2-3.0.1
+PyPDF2==3.0.1
