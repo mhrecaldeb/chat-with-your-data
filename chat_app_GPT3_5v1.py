@@ -3,7 +3,7 @@
 import sys
 import os
 import datetime
-import PyPDF2
+#import PyPDF2
 
 import openai
 
@@ -21,6 +21,7 @@ from PyPDF2 import PdfReader
 
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS, Chroma
 from langchain.document_loaders import TextLoader
 
@@ -70,7 +71,7 @@ if key_entered:
 
     # Load PDF
 
-    st.sidebar.write("""
+    st.write("""
                  ### Selecciona los PDF que quieres usar
                  """)
 
@@ -87,124 +88,86 @@ if key_entered:
     
     #st.write("###loaders: ", type(loaders))
 
-    uploaded_files = st.sidebar.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=False)
+    uploaded_files = st.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=True)
 
+    # extract text from files
     if uploaded_files is not None:
-         for uploaded_file in uploaded_files:
+        #pdf_reader = PdfReader(uploaded_files)
+        loaders = []
+        for uploaded_file in uploaded_files:
+            loaders.append(PyPDFLoader(uploaded_file))
+            st.write("filename:", uploaded_file.name)
+        
+        #text = ""
+        #for page in pdf_reader.pages:
+        #    text += page.extract_text()
+
+        docs = []
+        for loader in loaders:
+            docs.extend(loader.load())
     
-    
-             loaders.append(PyPDFLoader(uploaded_file))
-             bytes_data = uploaded_file.read()
-             st.write("filename:", uploaded_file.name)
-             st.write(bytes_data)
-
-    # if uploaded_files is not None:
-       
-        # for uploaded_file in uploaded_files:
-        #     #loaders.append(PyPDFLoader(uploaded_file))
-        #     docs.extend(uploaded_file.getvalue())
-        #     bytes_data = uploaded_file.read()
-        #     st.write("filename:", uploaded_file.name)
-        #     st.write(bytes_data)
-
-    # To read file as bytes:
-        # bytes_data = uploaded_files.getvalue()
-        # st.write(bytes_data)
-
-        # # To convert to a string based IO:
-        # stringio = StringIO(uploaded_files.getvalue().decode("utf-8"))
-        # st.write(stringio)
-
-        # # To read file as string:
-        # string_data = stringio.read()
-        # st.write(string_data)
+        # Split
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size = 1500,
+            chunk_overlap = 150
+        )
 
 
-    docs = []
-    for loader in loaders:
-        docs.extend(loader.load())
+        splits = text_splitter.split_documents(docs) #was docs
+        embedding = OpenAIEmbeddings()
+
+        vectordb = FAISS.from_documents(
+            splits,
+            embedding
+        )
+
+        ### Retrieval QA
+        llm = ChatOpenAI(model_name=llm_name, temperature=0)
+
+        # Build prompt
+        from langchain.prompts import PromptTemplate
+        template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, 
+                    "Yo no se", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre di: 
+                    "Gracias por preguntar", al final de la respuesta. 
+        {context}
+        Pregunta: {question}
+        Respuesta útil:"""
+        QA_CHAIN_PROMPT = PromptTemplate(input_variables=["context", "question"],template=template,)
 
 
-    # Split
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = 1500,
-        chunk_overlap = 150
-    )
+        # Run chain
+        #from langchain.chains import RetrievalQA
 
+        #"¿Qué señala el artículo 86 de la Ley de Transformación Digital y Audiovisual?"
 
-    splits = text_splitter.split_documents(docs)
-
-    ## persist_directory = './Data/chroma/'  # se podria descomentar para tratar chroma en streamlit
-
-    # a continuación se podría descomentar para usar chroma con el persist_directory
-    #""""
-    #for root, dirs, files in os.walk(persist_directory):
-    #    for file in files:
-    #        if file.endswith('.pdf'):
-    #            os.remove(os.path.join(root, file))
-    #"""
-
-    embedding = OpenAIEmbeddings()
-    ## vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)  # se podría descomentar para usar chroma en streamlit
-    vectordb = FAISS.from_documents(
-        splits,
-        embedding
-    )
-
-    ### Retrieval QA
-    llm = ChatOpenAI(model_name=llm_name, temperature=0)
-
-    # Build prompt
-    from langchain.prompts import PromptTemplate
-    template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, 
-                "Yo no se", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre di: 
-                "Gracias por preguntar", al final de la respuesta. 
-    {context}
-    Pregunta: {question}
-    Respuesta útil:"""
-    QA_CHAIN_PROMPT = PromptTemplate(input_variables=["context", "question"],template=template,)
-
-
-    # Run chain
-    #from langchain.chains import RetrievalQA
-
-    #"¿Qué señala el artículo 86 de la Ley de Transformación Digital y Audiovisual?"
-
-    qa_chain = RetrievalQA.from_chain_type(llm,
-                                        retriever=vectordb.as_retriever(),
-                                        return_source_documents=True,
-                                        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
+        qa_chain = RetrievalQA.from_chain_type(llm,
+                                            retriever=vectordb.as_retriever(),
+                                            return_source_documents=True,
+                                            chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
 
 
 
-    # Crear un título central 
-    st.title('Conversa con tus documentos')
+        # Crear un título central 
+        st.title('Conversa con tus documentos')
 
-    # Crear una caja de entrada de texto
-    question = st.text_input('¿Qué quieres preguntar sobre el / los documentos?:')
+        # Crear una caja de entrada de texto
+        question = st.text_input('¿Qué quieres preguntar sobre el / los documentos?:')
 
-    #question = input("¿Qué quieres preguntar sobre el / los documentos?: \n")
-
-
-    # If the user hits enter
-    if question:
-        result = qa_chain({"query": question})
-        # ...and write it out to the screen
-        st.write("""
-            ### Esta es la respuesta
-                """)
-        st.write(result["result"])
-
-        # Display raw response object
-        with st.expander('Response Object'):
-            st.write(result)
-        # Display source text
-        #with st.expander('Source Text'):
-        #    st.write(result.get_formatted_sources())
+        #question = input("¿Qué quieres preguntar sobre el / los documentos?: \n")
 
 
+        # If the user hits enter
+        if question:
+            result = qa_chain({"query": question})
+            # ...and write it out to the screen
+            st.write("""
+                ### Esta es la respuesta
+                    """)
+            st.write(result["result"])
 
-    #result = qa_chain({"query": question})
-    #result["result"]
-    #print(result["result"])
+            # Display raw response object
+            with st.expander('Response Object'):
+                st.write(result)
+            # Display source text
+            #with st.expander('Source Text'):
+            #    st.write(result.get_formatted_sources())
