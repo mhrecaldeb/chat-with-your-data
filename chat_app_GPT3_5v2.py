@@ -1,23 +1,12 @@
-# Import streamlit for app dev
-
 import sys
 import os
 import datetime
-#import PyPDF2
 
 import openai
 
 import streamlit as st
 from io import StringIO
 from PyPDF2 import PdfReader
-
-#openai.api_key  = os.environ['OPENAI_API_KEY']
-#openai_api_key = input("Ingresa tu API KEY de OpenAI: \n")
-#openai_api_key = ""
-
-#os.environ['OPENAI_API_KEY'] = input("Ingresa tu API KEY de OpenAI: \n")
-#openai.api_key  = os.environ['OPENAI_API_KEY']
-
 
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
@@ -39,9 +28,6 @@ else:
     llm_name = "gpt-3.5-turbo"
 print(llm_name)
 
-
-#path = os.getcwd()
-path = "C:/Users/mhrec/OneDrive/Capacitación/AmazonWebScrapping/ChatWithLangChain/chat-with-your-data/"
 
 # encabezado de streamlite
 st.sidebar.header('Ingresa tu OpenAI API KEY')
@@ -97,8 +83,7 @@ if key_entered:
             length_function=len
         )
 
-        #splits = text_splitter.split_documents(text) #was docs
-        splits = text_splitter.split_text(text) #was docs
+        splits = text_splitter.split_text(text)
         embedding = OpenAIEmbeddings()
 
 
@@ -155,5 +140,3 @@ if key_entered:
             with st.expander('Response Object'):
                 st.write(result)
             # Display source text
-            #with st.expander('Source Text'):
-            #    st.write(result.get_formatted_sources())
