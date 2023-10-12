@@ -45,13 +45,6 @@ def main():
     Basado en el curso corto de Deeplearning.ai "Langchain chat with your data" y el Github Llama2RAG de Nick Nochnack
     """)
 
-    st.markdown("""
-    [Langchain Short Courses](https://learn.deeplearning.ai/langchain-chat-with-your-data)
-                        
-    [Llam2RAG](https://github.com/nicknochnack/Llama2RAG)
-                        
-    """)
-
 
     key_entered = st.sidebar.text_input('Ingresa tu api key aquí')
 
@@ -59,20 +52,26 @@ def main():
         os.environ['OPENAI_API_KEY'] = key_entered
         openai.api_key  = os.environ['OPENAI_API_KEY']
 
+        st.info("""
+                [Langchain Short Courses](https://learn.deeplearning.ai/langchain-chat-with-your-data)
+                
+                [Llam2RAG](https://github.com/nicknochnack/Llama2RAG)
+                        
+                """)
 
         # Load PDF
 
         st.write("""
                     ### Selecciona los PDF que quieres usar
-                    """)
-        while True:
-            uploaded_files = st.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=True)
-            if uploaded_files is not None:
-                break
-                
+        
+                             """)
+        
+        uploaded_files = st.file_uploader('Choose your .pdf file', type="pdf", accept_multiple_files=True)
+        
+      
        # extract text from files
 
-        if uploaded_files is not None:
+        if uploaded_files:
             
             text = ""
             for uploaded_file in uploaded_files:
@@ -106,8 +105,8 @@ def main():
             # Build prompt
             from langchain.prompts import PromptTemplate
             template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, 
-                        "Yo no se", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre di: 
-                        "Gracias por preguntar", al final de la respuesta. 
+                        "Yo no se la respuesta a esa pregunta", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre, después de un salto de línea, di: 
+                        " Gracias por preguntar", al final de la respuesta. 
             {context}
             Pregunta: {question}
             Respuesta útil:"""
