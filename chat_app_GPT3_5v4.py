@@ -35,7 +35,7 @@ def main():
 
 
     # encabezado de streamlite
-    st.title("ASISTENTE PARA EL APOYO DIARIO DE ABOGADOS")
+    st.title("Aplicación inteligente para profesionales del Derecho: ¡consulta tus documentos no los leas!")
 
     st.sidebar.title('Ingresa tu OpenAI API KEY')
 
@@ -44,7 +44,7 @@ def main():
 
     Esta aplicación te permite preguntar a tus documentos!
 
-    Basado en el curso corto de Deeplearning.ai "Langchain chat with your data" y el Github Llama2RAG de Nick Nochnack
+    Basado en el curso corto de Deeplearning.ai "Langchain chat with your data" y el "Curso NLP" de Hugging Face
     """)
 
     key_entered = st.sidebar.text_input('Ingresa tu api key aquí')
@@ -56,7 +56,7 @@ def main():
         st.info("""
                 [Langchain Short Courses](https://learn.deeplearning.ai/langchain-chat-with-your-data)
                 
-                [Llam2RAG](https://github.com/nicknochnack/Llama2RAG)
+                [NLP Course](https://huggingface.co/learn/nlp-course/chapter1/1?fw=pt)
                         
                 """)
 
