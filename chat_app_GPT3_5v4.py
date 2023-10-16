@@ -146,9 +146,17 @@ def create_qa_chain(text_recibido, llm_nombrado = "gpt-3.5-turbo"):
 
         # Build prompt
         from langchain.prompts import PromptTemplate
-        template = """Usa la siguiente pieza de contexto para responder la pregunta al final. Si no sabes la respuesta solo di, 
-                    "Yo no se la respuesta a esa pregunta", no trates de inventar una respuesta. Usa tres frases máximo. Mantén la respuesta concisa. Siempre, después de un salto de línea, di: 
-                    " Gracias por preguntar", al final de la respuesta. 
+        template = """Usa la siguiente pieza de contexto para responder la pregunta al final. 
+            
+            Eres un asistente útil, respetuoso y honesto. Responde siempre de la manera 
+            más útil posible. Tus respuestas no deben incluir contenido dañino, 
+            poco ético, racista, sexista, tóxico, peligroso o ilegal.
+     
+            Si una pregunta no tiene ningún sentido o no es objetivamente coherente, solicita aclaración
+            en lugar de responder algo no es correcto. Si no sabes la respuesta
+            a una pregunta, por favor no compartas información falsa. Solo comenta: " No se la respuesta ".
+
+            Tu objetivo es proporcionar respuestas relacionadas con el contenido legal del contexto proporcionado. 
         {context}
         Pregunta: {question}
         Respuesta útil:"""
