@@ -85,7 +85,7 @@ if auth_token:
     # Create PDF Loader
     loader = PyMuPDFReader()
     # Load documents 
-    documents = loader.load(file_path=Path('./data/annualreport.pdf'), metadata=True)
+    documents = loader.load(file_path=Path('./data/Resolucion_no_008_NG_Dinarp_2023.pdf'), metadata=True)
 
     # Create an index - we'll be able to query this in a sec
     index = VectorStoreIndex.from_documents(documents)
