@@ -61,11 +61,11 @@ def main():
                 """)
 
         #  Load PDF
-        text = None
+        text = False
         text = upload_information()
 
         # Split text
-        if text is not None:
+        if text:
             qa_chain_builded = create_qa_chain(text, llm_name)
 
             # Crear un título central 
