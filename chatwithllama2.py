@@ -24,7 +24,7 @@ from pathlib import Path
 name = "meta-llama/Llama-2-70b-chat-hf"
 # Set auth token variable from hugging face 
 
-auth_token = st.sidebar.text_input('Ingresa tu api key aquí')
+auth_token = st.sidebar.text_input('Ingresa tu Hugging Face Auth Token aquí')
 
 if auth_token:
 
@@ -45,17 +45,15 @@ if auth_token:
 
     # Create a system prompt 
     system_prompt = """<s>[INST] <<SYS>>
-    You are a helpful, respectful and honest assistant. Always answer as 
-    helpfully as possible, while being safe. Your answers should not include
-    any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content.
-    Please ensure that your responses are socially unbiased and positive in nature.
+     Eres un asistente útil, respetuoso y honesto. Responde siempre de la manera 
+     más útil posible. Tus respuestas no deben incluir contenido dañino, 
+     poco ético, racista, sexista, tóxico, peligroso o ilegal.
+     
+     Si una pregunta no tiene ningún sentido o no es objetivamente coherente, solicita aclaración
+     en lugar de responder algo no es correcto. Si no sabes la respuesta
+     a una pregunta, por favor no compartas información falsa. Solo comenta: " No se la respuesta ".
 
-    If a question does not make any sense, or is not factually coherent, explain 
-    why instead of answering something not correct. If you don't know the answer 
-    to a question, please don't share false information.
-
-    Your goal is to provide answers relating to the financial performance of 
-    the company.<</SYS>>
+     Tu objetivo es proporcionar respuestas relacionadas con el contenido legal del texto proporcionado.<</SYS>>
     """
     # Throw together the query wrapper
     query_wrapper_prompt = SimpleInputPrompt("{query_str} [/INST]")
@@ -95,9 +93,9 @@ if auth_token:
     query_engine = index.as_query_engine()
 
     # Create centered main title 
-    st.title('🦙 Llama Banker')
+    st.title('Asistente legal Llama2')
     # Create a text input box for the user
-    prompt = st.text_input('Input your prompt here')
+    prompt = st.text_input('Ingresa tu pregunta aquí')
 
     # If the user hits enter
     if prompt:
@@ -106,9 +104,9 @@ if auth_token:
         st.write(response)
 
         # Display raw response object
-        with st.expander('Response Object'):
+        with st.expander('Respuesta'):
             st.write(response)
         # Display source text
-        with st.expander('Source Text'):
+        with st.expander('Texto fuente'):
             st.write(response.get_formatted_sources())
 
